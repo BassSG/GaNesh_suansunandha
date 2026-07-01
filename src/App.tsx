@@ -7,7 +7,7 @@ import { ParentPanel } from "./components/ParentPanel";
 import { activities, checklist, examDate, routine } from "./data/learning";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { useSpeech } from "./hooks/useSpeech";
-import type { ActivityId } from "./types";
+import type { Activity, ActivityId, LearnerId, LearnerProfile } from "./types";
 
 type ProgressState = {
   dateKey: string;
@@ -18,6 +18,12 @@ type ProgressState = {
 };
 
 type ChecklistState = Record<string, boolean>;
+type ProgressByProfile = Record<LearnerId, ProgressState>;
+
+const learnerProfiles: LearnerProfile[] = [
+  { id: "ganesh", label: "กาเนส", emoji: "😊" },
+  { id: "papa", label: "ปะป๊า", emoji: "🧑" }
+];
 
 const initialTaskIndex: Record<ActivityId, number> = {
   listen: 0,
@@ -39,27 +45,48 @@ function getDaysLeft() {
   return Math.ceil(diff / 86_400_000);
 }
 
-function createInitialProgress(): ProgressState {
+function createInitialProgress(activeActivity: ActivityId = "listen"): ProgressState {
   return {
     dateKey: todayKey(),
-    activeActivity: "listen",
+    activeActivity,
     stars: 0,
     doneTaskIds: {},
-    taskIndexByActivity: initialTaskIndex
+    taskIndexByActivity: { ...initialTaskIndex }
   };
+}
+
+function createInitialProgressByProfile(): ProgressByProfile {
+  return {
+    ganesh: createInitialProgress(),
+    papa: createInitialProgress()
+  };
+}
+
+function getFirstOpenTaskIndex(activity: Activity, doneTaskIds: Record<string, boolean>) {
+  const openIndex = activity.tasks.findIndex((task) => !doneTaskIds[task.id]);
+  return openIndex >= 0 ? openIndex : 0;
 }
 
 function App() {
   const baseUrl = import.meta.env.BASE_URL;
   const { speak, speaking } = useSpeech();
   const [viewMode, setViewMode] = useState<"home" | "mission" | "stars" | "library" | "parent">("home");
-  const [progress, setProgress] = useLocalStorage<ProgressState>("ganesh-ready-progress-v1", createInitialProgress());
+  const [activeProfile, setActiveProfile] = useLocalStorage<LearnerId>("ganesh-ready-active-profile-v1", "ganesh");
+  const [progressByProfile, setProgressByProfile] = useLocalStorage<ProgressByProfile>(
+    "ganesh-ready-progress-by-profile-v2",
+    createInitialProgressByProfile()
+  );
   const [checked, setChecked] = useLocalStorage<ChecklistState>("ganesh-ready-checklist-v1", {});
+  const activeProfileInfo = learnerProfiles.find((profile) => profile.id === activeProfile) ?? learnerProfiles[0];
+  const progress = progressByProfile[activeProfile] ?? createInitialProgress();
 
   useEffect(() => {
     if (progress.dateKey === todayKey()) return;
-    setProgress({ ...createInitialProgress(), activeActivity: progress.activeActivity });
-  }, [progress.activeActivity, progress.dateKey, setProgress]);
+    setProgressByProfile((current) => ({
+      ...current,
+      [activeProfile]: createInitialProgress(progress.activeActivity)
+    }));
+  }, [activeProfile, progress.activeActivity, progress.dateKey, setProgressByProfile]);
 
   const activeActivity = activities.find((activity) => activity.id === progress.activeActivity) ?? activities[0];
   const activeTaskIndex = progress.taskIndexByActivity[activeActivity.id] ?? 0;
@@ -75,26 +102,65 @@ function App() {
   const completedToday = Object.values(progress.doneTaskIds).filter(Boolean).length;
   const daysLeft = getDaysLeft();
 
+  const updateProgress = (updater: (current: ProgressState) => ProgressState) => {
+    setProgressByProfile((current) => {
+      const currentProgress = current[activeProfile] ?? createInitialProgress();
+      return {
+        ...current,
+        [activeProfile]: updater(currentProgress)
+      };
+    });
+  };
+
   const handleSelectActivity = (id: ActivityId) => {
-    setProgress((current) => ({ ...current, activeActivity: id }));
+    updateProgress((current) => ({ ...current, activeActivity: id }));
+    setViewMode("home");
+  };
+
+  const handleSelectProfile = (id: LearnerId) => {
+    setActiveProfile(id);
+    setViewMode("home");
+  };
+
+  const handleResetProfile = () => {
+    setProgressByProfile((current) => ({
+      ...current,
+      [activeProfile]: createInitialProgress()
+    }));
+    speak(`ล้างผลของ ${activeProfileInfo.label} แล้ว เริ่มใหม่ได้เลย`);
     setViewMode("home");
   };
 
   const handleCompleteTask = () => {
-    const nextIndex = (activeTaskIndex + 1) % activeActivity.tasks.length;
+    const activityIndex = activities.findIndex((activity) => activity.id === activeActivity.id);
+    const isLastTaskInActivity = activeTaskIndex >= activeActivity.tasks.length - 1;
+    const nextActivity = isLastTaskInActivity
+      ? activities[(activityIndex + 1) % activities.length]
+      : activeActivity;
+    const completedTaskIds = { ...progress.doneTaskIds, [activeTask.id]: true };
+    const nextIndex = isLastTaskInActivity
+      ? getFirstOpenTaskIndex(nextActivity, completedTaskIds)
+      : activeTaskIndex + 1;
+    const nextTask = nextActivity.tasks[nextIndex] ?? nextActivity.tasks[0];
+    const alreadyDone = Boolean(progress.doneTaskIds[activeTask.id]);
 
-    setProgress((current) => ({
+    updateProgress((current) => ({
       ...current,
-      stars: Math.min(20, current.stars + 1),
+      activeActivity: nextActivity.id,
+      stars: alreadyDone ? current.stars : Math.min(20, current.stars + 1),
       doneTaskIds: { ...current.doneTaskIds, [activeTask.id]: true },
       taskIndexByActivity: {
         ...current.taskIndexByActivity,
-        [activeActivity.id]: nextIndex
+        [activeActivity.id]: isLastTaskInActivity ? 0 : nextIndex,
+        [nextActivity.id]: nextIndex
       }
     }));
 
-    const nextTask = activeActivity.tasks[nextIndex];
     window.setTimeout(() => {
+      if (isLastTaskInActivity) {
+        speak(`จบฐาน ${activeActivity.title} แล้ว ต่อไปฐาน ${nextActivity.title} ${nextTask.prompt}`);
+        return;
+      }
       speak(`ต่อไป ${nextTask.prompt}`);
     }, 250);
   };
@@ -112,6 +178,10 @@ function App() {
         daysLeft={daysLeft}
         stars={progress.stars}
         completedToday={completedToday}
+        activeProfile={activeProfile}
+        profiles={learnerProfiles}
+        onSelectProfile={handleSelectProfile}
+        onResetProfile={handleResetProfile}
         onSpeakIntro={() => speak("วันนี้เราจะฝึกแบบสบาย ๆ ฟังโจทย์ให้จบ แล้วค่อยแตะคำตอบนะกาเนส")}
       />
 

@@ -1,5 +1,13 @@
 export type ActivityId = "listen" | "thai" | "math" | "trace" | "interview";
 
+export type LearnerId = "ganesh" | "papa";
+
+export type LearnerProfile = {
+  id: LearnerId;
+  label: string;
+  emoji: string;
+};
+
 export type ChoiceOption = {
   id: string;
   label: string;

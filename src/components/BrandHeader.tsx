@@ -1,14 +1,29 @@
-import { Settings, Star, Volume2 } from "lucide-react";
+import { RotateCcw, Star, Volume2 } from "lucide-react";
+import type { LearnerId, LearnerProfile } from "../types";
 
 type BrandHeaderProps = {
   daysLeft: number;
   stars: number;
   completedToday: number;
   logoSrc: string;
+  activeProfile: LearnerId;
+  profiles: LearnerProfile[];
   onSpeakIntro: () => void;
+  onSelectProfile: (id: LearnerId) => void;
+  onResetProfile: () => void;
 };
 
-export function BrandHeader({ daysLeft, stars, completedToday, logoSrc, onSpeakIntro }: BrandHeaderProps) {
+export function BrandHeader({
+  daysLeft,
+  stars,
+  completedToday,
+  logoSrc,
+  activeProfile,
+  profiles,
+  onSpeakIntro,
+  onSelectProfile,
+  onResetProfile
+}: BrandHeaderProps) {
   const dayText = daysLeft > 0 ? `เหลือ ${daysLeft} วัน` : daysLeft === 0 ? "วันนี้สอบ" : "ผ่านวันสอบแล้ว";
 
   return (
@@ -25,6 +40,27 @@ export function BrandHeader({ daysLeft, stars, completedToday, logoSrc, onSpeakI
         <Volume2 size={24} />
         <span>ฟังเริ่มฝึก</span>
       </button>
+
+      <div className="profile-switcher" aria-label="เลือกผู้เล่น">
+        <span className="profile-label">ผู้เล่น</span>
+        <div className="profile-options">
+          {profiles.map((profile) => (
+            <button
+              key={profile.id}
+              type="button"
+              className={profile.id === activeProfile ? "is-active" : ""}
+              onClick={() => onSelectProfile(profile.id)}
+            >
+              <span aria-hidden="true">{profile.emoji}</span>
+              <strong>{profile.label}</strong>
+            </button>
+          ))}
+        </div>
+        <button className="reset-profile" type="button" onClick={onResetProfile}>
+          <RotateCcw size={18} />
+          <span>ล้างคนนี้</span>
+        </button>
+      </div>
 
       <div className="top-stats" aria-label="ความคืบหน้าวันนี้">
         <div className="countdown-pill">
@@ -45,9 +81,6 @@ export function BrandHeader({ daysLeft, stars, completedToday, logoSrc, onSpeakI
           <span>😊</span>
           <strong>{completedToday}</strong>
         </div>
-        <button className="icon-button" type="button" aria-label="ตั้งค่าเสียง">
-          <Settings size={24} />
-        </button>
       </div>
     </header>
   );
