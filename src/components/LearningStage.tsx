@@ -36,8 +36,9 @@ export function LearningStage({
   const progressLabel = `${taskNumber}/${totalTasks}`;
 
   const selectedMap = useMemo(() => new Set(sequence), [sequence]);
+  const choiceVisual = task.kind === "choice" ? task.visual : undefined;
 
-  const speakPrompt = () => onSpeak(`${activity.title} ${task.prompt}`);
+  const speakPrompt = () => onSpeak(`${activity.title} ${task.prompt}${choiceVisual ? ` ${choiceVisual.title}` : ""}`);
 
   const markSuccess = (message: string) => {
     setAnswerState("success");
@@ -102,6 +103,20 @@ export function LearningStage({
           <p>{task.parentCue}</p>
         </div>
       </div>
+
+      {choiceVisual ? (
+        <div className="question-visual" aria-label={choiceVisual.title}>
+          <strong>{choiceVisual.title}</strong>
+          <div className="question-visual-items">
+            {choiceVisual.items.map((item) => (
+              <div key={item.id} className="question-visual-card">
+                <span className="question-visual-emoji" aria-hidden="true">{item.emoji}</span>
+                <span className="question-visual-label">{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       {task.kind === "choice" ? (
         <div className="choice-grid">

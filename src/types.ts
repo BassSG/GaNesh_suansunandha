@@ -15,12 +15,18 @@ export type ChoiceOption = {
   helper?: string;
 };
 
+export type PromptVisual = {
+  title: string;
+  items: ChoiceOption[];
+};
+
 export type ChoiceTask = {
   kind: "choice";
   id: string;
   title: string;
   prompt: string;
   parentCue: string;
+  visual?: PromptVisual;
   options: ChoiceOption[];
   answerId: string;
   success: string;

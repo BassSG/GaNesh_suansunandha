@@ -130,14 +130,24 @@ export const activities: Activity[] = [
       {
         kind: "choice",
         id: "math-count-five",
+        visual: {
+          title: "นับแอปเปิลในกรอบนี้",
+          items: [
+            { id: "apple-1", label: "ลูกที่ 1", emoji: "🍎" },
+            { id: "apple-2", label: "ลูกที่ 2", emoji: "🍎" },
+            { id: "apple-3", label: "ลูกที่ 3", emoji: "🍎" },
+            { id: "apple-4", label: "ลูกที่ 4", emoji: "🍎" },
+            { id: "apple-5", label: "ลูกที่ 5", emoji: "🍎" }
+          ]
+        },
         title: "นับของจริง",
         prompt: "มีแอปเปิลกี่ลูก",
         parentCue: "ให้เด็กชี้นับทีละลูก ไม่เดาคำตอบ",
         options: [
-          { id: "3", label: "3", emoji: "🍎🍎🍎" },
-          { id: "4", label: "4", emoji: "🍎🍎🍎🍎" },
-          { id: "5", label: "5", emoji: "🍎🍎🍎🍎🍎" },
-          { id: "6", label: "6", emoji: "🍎🍎🍎🍎🍎🍎" }
+          { id: "3", label: "3", emoji: "3" },
+          { id: "4", label: "4", emoji: "4" },
+          { id: "5", label: "5", emoji: "5" },
+          { id: "6", label: "6", emoji: "6" }
         ],
         answerId: "5",
         success: "ใช่แล้ว มีห้าลูก"
@@ -145,12 +155,19 @@ export const activities: Activity[] = [
       {
         kind: "choice",
         id: "math-more",
+        visual: {
+          title: "ดูของในตะกร้าก่อนตอบ",
+          items: [
+            { id: "basket-a-scene", label: "ตะกร้า A", emoji: "🧺 🍌 🍌" },
+            { id: "basket-b-scene", label: "ตะกร้า B", emoji: "🧺 🍌 🍌 🍌 🍌" }
+          ]
+        },
         title: "มากหรือน้อย",
         prompt: "ตะกร้าไหนมีของมากกว่า",
         parentCue: "ใช้คำว่า มากกว่า น้อยกว่า สลับกันให้คุ้น",
         options: [
-          { id: "basket-a", label: "ตะกร้า A", emoji: "🧺 🍌🍌" },
-          { id: "basket-b", label: "ตะกร้า B", emoji: "🧺 🍌🍌🍌🍌" },
+          { id: "basket-a", label: "ตะกร้า A", emoji: "A" },
+          { id: "basket-b", label: "ตะกร้า B", emoji: "B" },
           { id: "same", label: "เท่ากัน", emoji: "🟰" },
           { id: "empty", label: "ไม่มีของ", emoji: "⬜" }
         ],
@@ -160,6 +177,16 @@ export const activities: Activity[] = [
       {
         kind: "choice",
         id: "math-pattern",
+        visual: {
+          title: "ดูแบบรูป แล้วเลือกภาพถัดไป",
+          items: [
+            { id: "pattern-1", label: "1", emoji: "🟢" },
+            { id: "pattern-2", label: "2", emoji: "🟦" },
+            { id: "pattern-3", label: "3", emoji: "🟢" },
+            { id: "pattern-4", label: "4", emoji: "🟦" },
+            { id: "pattern-next", label: "ต่อไป", emoji: "?" }
+          ]
+        },
         title: "ต่อแบบรูป",
         prompt: "วงกลม สี่เหลี่ยม วงกลม สี่เหลี่ยม ต่อไปเป็นอะไร",
         parentCue: "ให้เด็กพูดแบบรูปออกเสียงก่อนตอบ",
