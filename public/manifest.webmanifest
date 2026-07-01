@@ -1,0 +1,25 @@
+{
+  "name": "กาเนส พร้อมสอบ ป.1",
+  "short_name": "กาเนส ป.1",
+  "description": "เว็บแอปฝึกความพร้อมสอบเข้า ป.1 สำหรับน้องกาเนส",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "landscape-primary",
+  "background_color": "#fff9ed",
+  "theme_color": "#087d73",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
