@@ -26,6 +26,7 @@ export type ChoiceTask = {
   title: string;
   prompt: string;
   parentCue: string;
+  hint?: string;
   visual?: PromptVisual;
   options: ChoiceOption[];
   answerId: string;
@@ -38,6 +39,7 @@ export type SequenceTask = {
   title: string;
   prompt: string;
   parentCue: string;
+  hint?: string;
   options: ChoiceOption[];
   answerIds: string[];
   success: string;
@@ -49,7 +51,10 @@ export type TraceTask = {
   title: string;
   prompt: string;
   parentCue: string;
+  hint?: string;
   guide: "wave" | "circle" | "zigzag";
+  startEmoji?: string;
+  endEmoji?: string;
   success: string;
 };
 
@@ -59,6 +64,7 @@ export type InterviewTask = {
   title: string;
   prompt: string;
   parentCue: string;
+  hint?: string;
   sampleAnswer: string;
   success: string;
 };
@@ -75,6 +81,24 @@ export type Activity = {
   emoji: string;
   goal: string;
   tasks: LearningTask[];
+};
+
+export type PracticeMode = "free" | "daily";
+
+export type ProgressState = {
+  dateKey: string;
+  activeActivity: ActivityId;
+  practiceMode: PracticeMode;
+  stars: number;
+  doneTaskIds: Record<string, boolean>;
+  mistakesByTaskId: Record<string, number>;
+  taskIndexByActivity: Record<ActivityId, number>;
+};
+
+export type DailyPlanItem = {
+  activityId: ActivityId;
+  target: number;
+  minutes: number;
 };
 
 export type RoutineStep = {

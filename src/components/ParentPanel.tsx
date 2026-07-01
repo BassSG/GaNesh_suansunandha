@@ -1,17 +1,55 @@
 import { Check, ClipboardCheck, Heart, X } from "lucide-react";
-import type { ChecklistItem, RoutineStep } from "../types";
+import type { Activity, ActivityId, ChecklistItem, LearnerProfile, RoutineStep } from "../types";
 
 type ParentPanelProps = {
   checklist: ChecklistItem[];
   checked: Record<string, boolean>;
   routine: RoutineStep[];
+  activities: Activity[];
+  activeProfile: LearnerProfile;
+  progressByActivity: Record<ActivityId, number>;
+  totalByActivity: Record<ActivityId, number>;
+  completedToday: number;
+  mistakeCount: number;
+  dailyPlanCompleted: number;
+  dailyPlanTotal: number;
   open: boolean;
   onToggleItem: (id: string) => void;
   onClose: () => void;
 };
 
-export function ParentPanel({ checklist, checked, routine, open, onToggleItem, onClose }: ParentPanelProps) {
+export function ParentPanel({
+  checklist,
+  checked,
+  routine,
+  activities,
+  activeProfile,
+  progressByActivity,
+  totalByActivity,
+  completedToday,
+  mistakeCount,
+  dailyPlanCompleted,
+  dailyPlanTotal,
+  open,
+  onToggleItem,
+  onClose
+}: ParentPanelProps) {
   const checkedCount = checklist.filter((item) => checked[item.id]).length;
+  const attempts = completedToday + mistakeCount;
+  const accuracy = attempts > 0 ? Math.round((completedToday / attempts) * 100) : 100;
+  const weakestActivity = activities
+    .map((activity) => ({
+      activity,
+      done: progressByActivity[activity.id] ?? 0,
+      total: totalByActivity[activity.id] ?? activity.tasks.length
+    }))
+    .sort((a, b) => a.done / a.total - b.done / b.total)[0];
+  const parentTip =
+    mistakeCount > 0
+      ? "มีข้อที่ลองผิดอยู่ กลับไปฟังโจทย์ช้า ๆ แล้วให้ชี้ภาพก่อนตอบ"
+      : dailyPlanCompleted < dailyPlanTotal
+        ? "ทำแผนวันนี้ให้ครบก่อน แล้วค่อยเล่นอิสระ"
+        : "วันนี้พอแล้ว ปิดท้ายด้วยคำชมและพักสายตา";
 
   return (
     <aside className={`parent-panel ${open ? "is-open" : ""}`} aria-label="สำหรับผู้ปกครอง">
@@ -28,8 +66,46 @@ export function ParentPanel({ checklist, checked, routine, open, onToggleItem, o
         <strong>{checkedCount}/{checklist.length}</strong>
       </div>
 
+      <div className="practice-report">
+        <div className="report-head">
+          <span>รายงานของ {activeProfile.label}</span>
+          <strong>แผน {dailyPlanCompleted}/{dailyPlanTotal}</strong>
+        </div>
+        <div className="report-metrics">
+          <div>
+            <span>ทำแล้ว</span>
+            <strong>{completedToday}</strong>
+          </div>
+          <div>
+            <span>ความแม่น</span>
+            <strong>{accuracy}%</strong>
+          </div>
+          <div>
+            <span>ลองผิด</span>
+            <strong>{mistakeCount}</strong>
+          </div>
+        </div>
+        <div className="activity-report-list">
+          {activities.map((activity) => {
+            const done = progressByActivity[activity.id] ?? 0;
+            const total = totalByActivity[activity.id] ?? activity.tasks.length;
+            return (
+              <div key={activity.id}>
+                <span style={{ background: activity.color }}>{activity.order}</span>
+                <strong>{activity.shortTitle}</strong>
+                <small>{done}/{total}</small>
+              </div>
+            );
+          })}
+        </div>
+        <div className="parent-tip">
+          <b>ควรเน้นต่อ</b>
+          <span>{weakestActivity?.activity.shortTitle}: {parentTip}</span>
+        </div>
+      </div>
+
       <div className="checklist">
-        {checklist.slice(0, 6).map((item) => (
+        {checklist.map((item) => (
           <button key={item.id} type="button" className="check-row" onClick={() => onToggleItem(item.id)}>
             <span className="check-icon" aria-hidden="true">
               {item.icon}

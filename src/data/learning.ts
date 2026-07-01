@@ -1,6 +1,14 @@
-import type { Activity, ChecklistItem, RoutineStep } from "../types";
+import type { Activity, ChecklistItem, DailyPlanItem, RoutineStep } from "../types";
 
 export const examDate = "2026-07-18T08:00:00+07:00";
+
+export const dailyPlan: DailyPlanItem[] = [
+  { activityId: "listen", target: 2, minutes: 4 },
+  { activityId: "thai", target: 2, minutes: 5 },
+  { activityId: "math", target: 2, minutes: 6 },
+  { activityId: "trace", target: 1, minutes: 4 },
+  { activityId: "interview", target: 1, minutes: 3 }
+];
 
 export const activities: Activity[] = [
   {
@@ -57,6 +65,61 @@ export const activities: Activity[] = [
         ],
         answerId: "left",
         success: "ถูกต้อง รู้จักทางซ้ายแล้ว"
+      },
+      {
+        kind: "sequence",
+        id: "listen-ear-nose-clap",
+        title: "ฟังแล้วทำกับตัวเอง",
+        prompt: "แตะหู แตะจมูก แล้วปรบมือ",
+        parentCue: "เหมาะสำหรับซ้อมฟัง 3 ขั้นตอนโดยไม่รีบแตะ",
+        hint: "ฟังใหม่ช้า ๆ เริ่มจากหูก่อน แล้วค่อยไปจมูก",
+        options: [
+          { id: "ear", label: "หู", emoji: "👂" },
+          { id: "nose", label: "จมูก", emoji: "👃" },
+          { id: "clap", label: "ปรบมือ", emoji: "👏" },
+          { id: "mouth", label: "ปาก", emoji: "👄" }
+        ],
+        answerIds: ["ear", "nose", "clap"],
+        success: "ฟังครบสามขั้นตอนแล้ว ทำได้ดีมาก"
+      },
+      {
+        kind: "choice",
+        id: "listen-top-star",
+        title: "ตำแหน่งบนล่าง",
+        prompt: "รูปไหนอยู่ข้างบน",
+        parentCue: "ให้เด็กมองภาพโจทย์ก่อนตอบ ไม่ต้องอ่านตัวหนังสือ",
+        hint: "ดูภาพด้านบนของกรอบก่อน แล้วแตะภาพนั้น",
+        visual: {
+          title: "ภาพบนคือดาว ภาพล่างคือรถ",
+          items: [
+            { id: "top-scene", label: "ข้างบน", emoji: "⭐" },
+            { id: "bottom-scene", label: "ข้างล่าง", emoji: "🚗" }
+          ]
+        },
+        options: [
+          { id: "star", label: "ดาว", emoji: "⭐" },
+          { id: "car", label: "รถ", emoji: "🚗" },
+          { id: "flower", label: "ดอกไม้", emoji: "🌼" },
+          { id: "book", label: "หนังสือ", emoji: "📘" }
+        ],
+        answerId: "star",
+        success: "ใช่แล้ว ดาวอยู่ข้างบน"
+      },
+      {
+        kind: "sequence",
+        id: "listen-book-pencil-box",
+        title: "เก็บของให้ครบ",
+        prompt: "แตะหนังสือ แตะดินสอ แล้วแตะกล่อง",
+        parentCue: "ซ้อมลำดับก่อน-หลังแบบที่เจอในห้องสอบ",
+        hint: "เริ่มที่หนังสือก่อน แล้วตามด้วยดินสอ",
+        options: [
+          { id: "book", label: "หนังสือ", emoji: "📘" },
+          { id: "pencil", label: "ดินสอ", emoji: "✏️" },
+          { id: "box", label: "กล่อง", emoji: "📦" },
+          { id: "ball", label: "ลูกบอล", emoji: "🔴" }
+        ],
+        answerIds: ["book", "pencil", "box"],
+        success: "เก็บของตามลำดับครบแล้ว"
       }
     ]
   },
@@ -114,6 +177,54 @@ export const activities: Activity[] = [
         ],
         answerId: "n",
         success: "เก่งมาก บ้านลงท้ายด้วยเสียง นอ"
+      },
+      {
+        kind: "choice",
+        id: "thai-gaw",
+        title: "หาเสียง กอ",
+        prompt: "คำไหนขึ้นต้นด้วยเสียง กอ",
+        parentCue: "ออกเสียง กอ ไก่ กอ กล้วย ให้เด็กฟังก่อนตอบ",
+        hint: "ฟังเสียงแรกของคำ ถ้าเริ่ม กอ ให้แตะภาพนั้น",
+        options: [
+          { id: "banana", label: "กล้วย", emoji: "🍌" },
+          { id: "milk", label: "นม", emoji: "🥛" },
+          { id: "fish", label: "ปลา", emoji: "🐟" },
+          { id: "house", label: "บ้าน", emoji: "🏠" }
+        ],
+        answerId: "banana",
+        success: "ใช่แล้ว กล้วยขึ้นต้นด้วยเสียง กอ"
+      },
+      {
+        kind: "choice",
+        id: "thai-house-word",
+        title: "จับภาพกับคำ",
+        prompt: "แตะคำว่า บ้าน",
+        parentCue: "ให้น้องฟังคำว่า บ้าน แล้วดูภาพประกอบ",
+        hint: "บ้านคือรูปหลังคาและประตู",
+        options: [
+          { id: "house", label: "บ้าน", emoji: "🏠" },
+          { id: "fish", label: "ปลา", emoji: "🐟" },
+          { id: "mango", label: "มะม่วง", emoji: "🥭" },
+          { id: "milk", label: "นม", emoji: "🥛" }
+        ],
+        answerId: "house",
+        success: "ถูกต้อง นี่คือคำว่า บ้าน"
+      },
+      {
+        kind: "choice",
+        id: "thai-naw",
+        title: "ฟังเสียง นอ",
+        prompt: "คำไหนขึ้นต้นด้วยเสียง นอ",
+        parentCue: "ออกเสียง นอ นม นอ หนู ช้า ๆ",
+        hint: "ลองพูดว่า นอ นม แล้วมองหานม",
+        options: [
+          { id: "milk", label: "นม", emoji: "🥛" },
+          { id: "star", label: "ดาว", emoji: "⭐" },
+          { id: "car", label: "รถ", emoji: "🚗" },
+          { id: "fish", label: "ปลา", emoji: "🐟" }
+        ],
+        answerId: "milk",
+        success: "ใช่เลย นมขึ้นต้นด้วยเสียง นอ"
       }
     ]
   },
@@ -198,6 +309,77 @@ export const activities: Activity[] = [
         ],
         answerId: "circle",
         success: "ดีมาก แบบรูปต่อไปคือวงกลม"
+      },
+      {
+        kind: "choice",
+        id: "math-count-three",
+        visual: {
+          title: "นับปลาในกรอบนี้",
+          items: [
+            { id: "fish-1", label: "ตัวที่ 1", emoji: "🐟" },
+            { id: "fish-2", label: "ตัวที่ 2", emoji: "🐟" },
+            { id: "fish-3", label: "ตัวที่ 3", emoji: "🐟" }
+          ]
+        },
+        title: "นับจำนวน 1-5",
+        prompt: "มีปลากี่ตัว",
+        parentCue: "ให้เด็กชี้นับจากซ้ายไปขวา",
+        hint: "ชี้ปลาทีละตัว แล้วนับ หนึ่ง สอง สาม",
+        options: [
+          { id: "2", label: "2", emoji: "2" },
+          { id: "3", label: "3", emoji: "3" },
+          { id: "4", label: "4", emoji: "4" },
+          { id: "5", label: "5", emoji: "5" }
+        ],
+        answerId: "3",
+        success: "ถูกต้อง มีปลาสามตัว"
+      },
+      {
+        kind: "choice",
+        id: "math-different-shape",
+        visual: {
+          title: "รูปไหนไม่เหมือนเพื่อน",
+          items: [
+            { id: "same-1", label: "1", emoji: "🔵" },
+            { id: "same-2", label: "2", emoji: "🔵" },
+            { id: "different", label: "3", emoji: "🔺" },
+            { id: "same-3", label: "4", emoji: "🔵" }
+          ]
+        },
+        title: "หาภาพต่าง",
+        prompt: "รูปไหนต่างจากเพื่อน",
+        parentCue: "ให้เด็กเทียบทีละภาพ สีและรูปทรง",
+        hint: "เพื่อนส่วนใหญ่เป็นวงกลมสีฟ้า มองหารูปที่ไม่ใช่วงกลม",
+        options: [
+          { id: "circle", label: "วงกลม", emoji: "🔵" },
+          { id: "triangle", label: "สามเหลี่ยม", emoji: "🔺" },
+          { id: "square", label: "สี่เหลี่ยม", emoji: "🟦" },
+          { id: "star", label: "ดาว", emoji: "⭐" }
+        ],
+        answerId: "triangle",
+        success: "ใช่แล้ว สามเหลี่ยมต่างจากเพื่อน"
+      },
+      {
+        kind: "choice",
+        id: "math-match-shape",
+        visual: {
+          title: "หารูปทรงเหมือนต้นแบบ",
+          items: [
+            { id: "target", label: "ต้นแบบ", emoji: "🟨" }
+          ]
+        },
+        title: "จับคู่รูปทรง",
+        prompt: "รูปไหนเหมือนต้นแบบ",
+        parentCue: "ให้ดูต้นแบบก่อน แล้วหาอันที่รูปร่างเหมือนกัน",
+        hint: "ต้นแบบเป็นสี่เหลี่ยมสีเหลือง มองหารูปสี่เหลี่ยม",
+        options: [
+          { id: "square", label: "สี่เหลี่ยม", emoji: "🟨" },
+          { id: "circle", label: "วงกลม", emoji: "🟢" },
+          { id: "triangle", label: "สามเหลี่ยม", emoji: "🔺" },
+          { id: "heart", label: "หัวใจ", emoji: "❤️" }
+        ],
+        answerId: "square",
+        success: "ถูกต้อง รูปนี้เหมือนต้นแบบ"
       }
     ]
   },
@@ -237,6 +419,42 @@ export const activities: Activity[] = [
         parentCue: "ฝึกหยุด เลี้ยว และทำต่อจนจบ",
         guide: "zigzag",
         success: "เก่งมาก ทำงานจนจบได้"
+      },
+      {
+        kind: "trace",
+        id: "trace-rainbow-wave",
+        title: "ทางไปสายรุ้ง",
+        prompt: "ลากเส้นคลื่นจากดาวไปหาสายรุ้ง",
+        parentCue: "ซ้อมควบคุมนิ้วให้ไหลต่อเนื่อง",
+        hint: "ค่อย ๆ ลากตามเส้น ไม่ต้องรีบ",
+        guide: "wave",
+        startEmoji: "⭐",
+        endEmoji: "🌈",
+        success: "ลื่นไหลดีมาก นิ้วมือพร้อมขึ้นแล้ว"
+      },
+      {
+        kind: "trace",
+        id: "trace-sun-circle",
+        title: "วงกลมรอบพระอาทิตย์",
+        prompt: "ลากวงกลมรอบพระอาทิตย์",
+        parentCue: "ฝึกวนข้อมือให้ต่อเนื่องและไม่กดจอแรง",
+        hint: "เริ่มช้า ๆ แล้ววนรอบภาพให้ครบ",
+        guide: "circle",
+        startEmoji: "☀️",
+        endEmoji: "☀️",
+        success: "วงกลมสวยมาก ควบคุมนิ้วได้ดี"
+      },
+      {
+        kind: "trace",
+        id: "trace-mountain-zigzag",
+        title: "ทางภูเขา",
+        prompt: "ลากเส้นซิกแซกไปหาธง",
+        parentCue: "ดูการหยุด เลี้ยว และไปต่ออย่างตั้งใจ",
+        hint: "หยุดที่มุมก่อน แล้วค่อยเลี้ยวไปเส้นต่อไป",
+        guide: "zigzag",
+        startEmoji: "⛰️",
+        endEmoji: "🚩",
+        success: "หยุดและเลี้ยวได้ดีมาก"
       }
     ]
   },
@@ -276,6 +494,36 @@ export const activities: Activity[] = [
         parentCue: "มองหาคำตอบที่รู้จักขอความช่วยเหลือ ไม่ใช้ความรุนแรง",
         sampleAnswer: "หนูจะบอกเพื่อนดี ๆ หรือบอกคุณครูครับ",
         success: "เยี่ยมมาก รู้จักพูดและขอความช่วยเหลือ"
+      },
+      {
+        kind: "interview",
+        id: "interview-teacher-help",
+        title: "ขอความช่วยเหลือ",
+        prompt: "ถ้าหนูไม่เข้าใจ หนูจะทำอย่างไร",
+        parentCue: "ฝึกให้เด็กกล้าขอให้ครูพูดซ้ำอย่างสุภาพ",
+        hint: "ตอบได้ว่า ขอให้คุณครูพูดอีกครั้ง",
+        sampleAnswer: "หนูจะยกมือ แล้วบอกคุณครูว่า ขอฟังอีกครั้งครับ",
+        success: "ดีมาก กล้าขอความช่วยเหลืออย่างสุภาพ"
+      },
+      {
+        kind: "interview",
+        id: "interview-breakfast",
+        title: "เรื่องใกล้ตัว",
+        prompt: "ตอนเช้าหนูกินอะไรมา",
+        parentCue: "ให้ตอบสั้น ชัด และเป็นเรื่องจริง",
+        hint: "ตอบชื่ออาหารง่าย ๆ เช่น ข้าว ไข่ นม หรือผลไม้",
+        sampleAnswer: "หนูกินข้าวกับไข่ และดื่มนมครับ",
+        success: "ตอบเรื่องใกล้ตัวได้ชัดเจนมาก"
+      },
+      {
+        kind: "interview",
+        id: "interview-good-manners",
+        title: "มารยาท",
+        prompt: "ถ้าคุณครูให้ของ หนูควรพูดว่าอะไร",
+        parentCue: "ฝึกคำสุภาพ ขอบคุณครับ และยิ้มไหว้ได้",
+        hint: "คำตอบคือ ขอบคุณครับ",
+        sampleAnswer: "หนูจะพูดว่า ขอบคุณครับ",
+        success: "สุภาพมาก พร้อมคุยกับคุณครูแล้ว"
       }
     ]
   }

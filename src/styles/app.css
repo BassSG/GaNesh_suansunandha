@@ -311,6 +311,93 @@ button:disabled {
   line-height: 1.45;
 }
 
+.daily-plan-card {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 2px solid #bce8df;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--shadow);
+}
+
+.daily-plan-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.daily-plan-head div {
+  display: grid;
+  gap: 2px;
+}
+
+.daily-plan-head span {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.daily-plan-head strong {
+  color: var(--teal-dark);
+  font-size: 1.2rem;
+}
+
+.daily-plan-head button {
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 8px;
+  background: var(--teal);
+  color: #ffffff;
+  font-weight: 900;
+}
+
+.daily-plan-steps,
+.activity-report-list {
+  display: grid;
+  gap: 7px;
+}
+
+.daily-plan-steps div,
+.activity-report-list div {
+  display: grid;
+  grid-template-columns: 30px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 38px;
+  padding: 7px 9px;
+  border-radius: 8px;
+  background: #f3fbf8;
+}
+
+.daily-plan-steps div.is-done {
+  background: #e9fbef;
+}
+
+.daily-plan-steps span,
+.activity-report-list span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.daily-plan-steps strong,
+.activity-report-list strong {
+  font-size: 0.96rem;
+}
+
+.daily-plan-steps small,
+.activity-report-list small {
+  color: var(--teal);
+  font-weight: 900;
+}
+
 .activity-rail {
   display: grid;
   gap: 12px;
@@ -733,6 +820,12 @@ button:disabled {
 
 .stage-actions {
   margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.auto-speak-toggle.is-on {
+  background: #e9fbef;
+  color: #138754;
 }
 
 .next-action,
@@ -792,6 +885,75 @@ button:disabled {
   background: #ecfaf7;
   color: var(--teal);
   font-weight: 900;
+}
+
+.practice-report {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 2px solid #d7ebe7;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.report-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.report-head span {
+  color: var(--teal-dark);
+  font-weight: 900;
+}
+
+.report-head strong {
+  color: #d96d16;
+}
+
+.report-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.report-metrics div {
+  display: grid;
+  gap: 3px;
+  min-height: 58px;
+  padding: 8px;
+  border-radius: 8px;
+  background: #fff8e6;
+  text-align: center;
+}
+
+.report-metrics span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.report-metrics strong {
+  color: var(--teal-dark);
+  font-size: 1.25rem;
+}
+
+.parent-tip {
+  display: grid;
+  gap: 3px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #ecfaf7;
+}
+
+.parent-tip b {
+  color: var(--teal-dark);
+}
+
+.parent-tip span {
+  color: var(--muted);
+  line-height: 1.35;
 }
 
 .checklist {

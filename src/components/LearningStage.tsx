@@ -1,6 +1,6 @@
 import { ArrowRight, Check, Mic, Play, Volume2, X } from "lucide-react";
 import type { CSSProperties } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Activity, ChoiceOption, LearningTask } from "../types";
 import { TracePad } from "./TracePad";
 
@@ -10,11 +10,15 @@ type LearningStageProps = {
   taskNumber: number;
   totalTasks: number;
   speaking: boolean;
+  autoSpeak: boolean;
   onSpeak: (text: string) => void;
+  onToggleAutoSpeak: () => void;
+  onMistake: (taskId: string) => void;
   onComplete: () => void;
 };
 
 type AnswerState = "idle" | "try" | "success";
+const defaultHint = "ลองฟังโจทย์อีกครั้ง แล้วค่อยแตะคำตอบนะ";
 
 export function LearningStage({
   activity,
@@ -22,14 +26,19 @@ export function LearningStage({
   taskNumber,
   totalTasks,
   speaking,
+  autoSpeak,
   onSpeak,
+  onToggleAutoSpeak,
+  onMistake,
   onComplete
 }: LearningStageProps) {
   const [answerState, setAnswerState] = useState<AnswerState>("idle");
+  const [hintMessage, setHintMessage] = useState(defaultHint);
   const [sequence, setSequence] = useState<string[]>([]);
 
   useEffect(() => {
     setAnswerState("idle");
+    setHintMessage(defaultHint);
     setSequence([]);
   }, [task.id]);
 
@@ -37,8 +46,18 @@ export function LearningStage({
 
   const selectedMap = useMemo(() => new Set(sequence), [sequence]);
   const choiceVisual = task.kind === "choice" ? task.visual : undefined;
+  const promptSpeechText = useMemo(
+    () => `${activity.title} ${task.prompt}${choiceVisual ? ` ${choiceVisual.title}` : ""}`,
+    [activity.title, choiceVisual, task.prompt]
+  );
 
-  const speakPrompt = () => onSpeak(`${activity.title} ${task.prompt}${choiceVisual ? ` ${choiceVisual.title}` : ""}`);
+  const speakPrompt = useCallback(() => onSpeak(promptSpeechText), [onSpeak, promptSpeechText]);
+
+  useEffect(() => {
+    if (!autoSpeak) return;
+    const timer = window.setTimeout(speakPrompt, 350);
+    return () => window.clearTimeout(timer);
+  }, [autoSpeak, speakPrompt]);
 
   const markSuccess = (message: string) => {
     setAnswerState("success");
@@ -46,8 +65,11 @@ export function LearningStage({
   };
 
   const markTryAgain = () => {
+    const nextHint = task.hint ?? defaultHint;
     setAnswerState("try");
-    onSpeak("ลองฟังโจทย์อีกครั้ง แล้วค่อยแตะคำตอบนะ");
+    setHintMessage(nextHint);
+    onMistake(task.id);
+    onSpeak(nextHint);
   };
 
   const handleChoice = (option: ChoiceOption) => {
@@ -186,12 +208,12 @@ export function LearningStage({
         ) : answerState === "try" ? (
           <>
             <Play size={24} />
-            <span>ลองใหม่ได้ ฟังให้จบก่อนตอบนะ</span>
+            <span>{hintMessage}</span>
           </>
         ) : (
           <>
             <Play size={24} />
-            <span>กดปุ่มลำโพง แล้วค่อยแตะคำตอบ</span>
+            <span>{autoSpeak ? "ฟังโจทย์ให้จบ แล้วค่อยแตะคำตอบ" : "กดปุ่มลำโพง แล้วค่อยแตะคำตอบ"}</span>
           </>
         )}
       </div>
@@ -200,6 +222,14 @@ export function LearningStage({
         <button type="button" className="secondary-action" onClick={speakPrompt}>
           <Volume2 size={22} />
           <span>ฟังอีกครั้ง</span>
+        </button>
+        <button
+          type="button"
+          className={`secondary-action auto-speak-toggle ${autoSpeak ? "is-on" : ""}`}
+          onClick={onToggleAutoSpeak}
+        >
+          <Volume2 size={22} />
+          <span>{autoSpeak ? "อ่านอัตโนมัติ" : "แตะอ่านเอง"}</span>
         </button>
         <button type="button" className="next-action" onClick={onComplete} disabled={answerState !== "success"}>
           <span>ทำต่อ</span>

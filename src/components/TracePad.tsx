@@ -70,8 +70,8 @@ export function TracePad({ task, onDone }: TracePadProps) {
   return (
     <div className="trace-pad">
       <div className={`trace-guide trace-${task.guide}`} aria-hidden="true">
-        <span className="trace-start">🐟</span>
-        <span className="trace-end">⭐</span>
+        <span className="trace-start">{task.startEmoji ?? "🐟"}</span>
+        <span className="trace-end">{task.endEmoji ?? "⭐"}</span>
       </div>
       <canvas
         ref={canvasRef}
